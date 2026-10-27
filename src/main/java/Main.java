@@ -13,28 +13,27 @@ public class Main {
         detailItems.add(new DetailItem("道路土工", "掘削工", "掘削", "土砂", "m2", new BigDecimal("200.0")));
         detailItems.add(new DetailItem("道路土工", "掘削工", "掘削", "軟岩", "m3", new BigDecimal("846.1")));
         detailItems.add(new DetailItem("道路土工", "掘削工", "盛土", "", "m3", new BigDecimal("1226.4")));
-        
-        HashMap<String, AggregatedItem> aggregatedItems = new HashMap<>();
 
-        for (DetailItem item : detailItems) {
-            String key = item.getTypeOfWork() + "・"
-            + item.getWorkCategory() + "・"
-            + item.getDetailedItem() + "・"
-            + item.getSpecification();
-            BigDecimal quantity = item.getQuantity();
-            String unit = item.getUnit();
-            if (aggregatedItems.containsKey(key)) {
-                aggregatedItems.get(key).addQuantity(quantity, unit);
-            } else {
-                AggregatedItem aggregatedItem =
-                new AggregatedItem(quantity,unit);
+        QuantityAggregator aggregator = new QuantityAggregator();
+        HashMap<String,AggregatedItem> aggregatedItems =
+            aggregator.aggregate(detailItems);
 
-                aggregatedItems.put(key, aggregatedItem);
+
+        for (Map.Entry<String, AggregatedItem> entry : aggregatedItems.entrySet()){
+            AggregatedItem result = entry.getValue();
+            HashMap<String, BigDecimal> units =
+                result.getQuantitiesByUnit();
+                System.out.println(entry.getKey());
+            
+            for(Map.Entry<String, BigDecimal> entry2 : units.entrySet()){
+                System.out.println(entry2.getKey() + " " +
+                    entry2.getValue());
+            }
+
+            if(result.isUnitMismatch()) {
+                System.out.println("単位不一致あり");
             }
         }
-        for (Map.Entry<String, AggregatedItem> entry : aggregatedItems.entrySet()){
-            System.out.println(entry.getKey() + " : " + entry.getValue()
-        );
-        }          
-    }
+    }          
 }
+

@@ -1,39 +1,34 @@
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 public class AggregatedItem {
 
-    private BigDecimal totalQuantity;
-    private String unit;
-    private boolean unitMismatch;
+    private HashMap<String,BigDecimal> quantitiesByUnit;
 
     //コンストラクタ
     public AggregatedItem(
         BigDecimal totalQuantity,
         String unit
-    ){
-        this.totalQuantity = totalQuantity;
-        this.unit = unit;
-        this.unitMismatch = false;
+    ){  
+        this.quantitiesByUnit = new HashMap<>();
+        this.quantitiesByUnit.put(unit,totalQuantity);
     }
 
-    public BigDecimal getTotalQuantity() {
-        return totalQuantity;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public boolean isUnitMismatch() {
-        return unitMismatch;
+    public HashMap<String,BigDecimal> getQuantitiesByUnit() {
+        return quantitiesByUnit;
     }
 
     public void addQuantity(BigDecimal quantity, String unit) {
-        if (this.unit.equals(unit)) {
-            this.totalQuantity = this.totalQuantity.add(quantity);
+        if (this.quantitiesByUnit.containsKey(unit)) {
+            quantitiesByUnit.put(
+                unit,
+                quantitiesByUnit.get(unit).add(quantity));
         } else {
-            this.unitMismatch = true;
+            quantitiesByUnit.put(unit,quantity);
         }
     }
+
+    public boolean isUnitMismatch() {
+        return quantitiesByUnit.size() > 1;
+    }
 }
-    
