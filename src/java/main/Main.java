@@ -1,3 +1,5 @@
+package main;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,13 +9,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArrayList<DetailItem> detailItems = new ArrayList<>();
-        detailItems.add(new DetailItem("道路土工", "掘削工", "掘削", "土砂", "m3", new BigDecimal("3045.6")));
-        detailItems.add(new DetailItem("道路土工", "掘削工", "掘削", "土砂", "m3", new BigDecimal("200.0")));
-        detailItems.add(new DetailItem("道路土工", "掘削工", "掘削", "土砂", "m2", new BigDecimal("200.0")));
-        detailItems.add(new DetailItem("道路土工", "掘削工", "掘削", "軟岩", "m3", new BigDecimal("846.1")));
-        detailItems.add(new DetailItem("道路土工", "掘削工", "盛土", "", "m3", new BigDecimal("1226.4")));
+        CsvReader csvReader = new CsvReader();
+        ArrayList<DetailItem> detailItems = csvReader.readCsv();
 
+        System.out.println("読み込み件数：" + detailItems.size());
+        
         QuantityAggregator aggregator = new QuantityAggregator();
         HashMap<String,AggregatedItem> aggregatedItems =
             aggregator.aggregate(detailItems);
@@ -23,7 +23,7 @@ public class Main {
             AggregatedItem result = entry.getValue();
             HashMap<String, BigDecimal> units =
                 result.getQuantitiesByUnit();
-                System.out.println(entry.getKey());
+                System.out.print(entry.getKey());
             
             for(Map.Entry<String, BigDecimal> entry2 : units.entrySet()){
                 System.out.println(entry2.getKey() + " " +
@@ -33,6 +33,7 @@ public class Main {
             if(result.isUnitMismatch()) {
                 System.out.println("単位不一致あり");
             }
+            System.out.println();
         }
     }          
 }
